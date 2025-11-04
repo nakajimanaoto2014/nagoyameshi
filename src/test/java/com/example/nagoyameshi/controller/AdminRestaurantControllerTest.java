@@ -45,7 +45,7 @@ public class AdminRestaurantControllerTest {
 	
 	@Test
 	@WithUserDetails("taro.samurai@example.com")
-	public void 一般ページとしてログイン済みの場合は管理者用の店舗一覧ページが表示されずに403エラーが発生する()
+	public void 一般ユーザーとしてログイン済みの場合は管理者用の店舗一覧ページが表示されずに403エラーが発生する()
 		throws Exception{
 		
 		mockMvc.perform(get("/admin/restaurants"))
@@ -133,7 +133,7 @@ public class AdminRestaurantControllerTest {
 		byte[] fileBytes = Files.readAllBytes(filePath);
 		
 		MockMultipartFile imageFile = new MockMultipartFile(
-				"imageFile" ,  //ファイルのname属性の値
+				"imageFile" ,  //フォームのname属性の値
 				fileName ,     //ファイル名
 				fileType ,     //ファイルの形式
 				fileBytes      //ファイルのバイト配列
@@ -142,7 +142,7 @@ public class AdminRestaurantControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/admin/restaurants/create").file(imageFile)
 				.with(csrf())
 				.param("name", "テスト店舗名")
-				.param("description", "テストの説明")
+				.param("description", "テスト説明")
 				.param("lowestPrice", "3000")
 				.param("highestPrice", "8000")
 				.param("postalCode", "0000000")
@@ -163,7 +163,7 @@ public class AdminRestaurantControllerTest {
 	@Test
 	@WithUserDetails("taro.samurai@example.com")
 	@Transactional
-	public void 一般ユーザーとしてログイン済みの場合は店舗登録せずに403エラーが発生する()
+	public void 一般ユーザーとしてログイン済みの場合は店舗登録をせずに403エラーが発生する()
 		throws Exception{
 		
 		//テスト前のレコード数を取得する
@@ -227,7 +227,7 @@ public class AdminRestaurantControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/admin/restaurants/create").file(imageFile)
 				.with(csrf())
 				.param("name", "テスト店舗名")
-				.param("description", "テストの説明")
+				.param("description", "テスト説明")
 				.param("lowestPrice" , "3000")
 				.param("highestPrice", "8000")
 				.param("postalCode", "0000000")
@@ -281,7 +281,7 @@ public class AdminRestaurantControllerTest {
 		throws Exception{
 		
 		mockMvc.perform(get("/admin/restaurants/1/edit"))
-			   .andExpect(status().isForbidden())
+			   .andExpect(status().isOk())
 			   .andExpect(view().name("admin/restaurants/edit"));
 	}
 	
@@ -320,14 +320,14 @@ public class AdminRestaurantControllerTest {
 	Optional<Restaurant> optionalRestaurant = restaurantService.findRestaurantById(1);
 	assertThat(optionalRestaurant).isPresent();
 	Restaurant restaurant = optionalRestaurant.get();
-	assertThat(restaurant.getName()).isEqualTo("NAGOYA BURGER 各駅店");
+	assertThat(restaurant.getName()).isEqualTo("NAGOYA BURGER 名駅店");
 	assertThat(restaurant.getDescription()).isEqualTo("名古屋老舗のお店。老舗の味をご堪能ください。");
 	assertThat(restaurant.getLowestPrice()).isEqualTo(3000);
 	assertThat(restaurant.getHighestPrice()).isEqualTo(4000);
-	assertThat(restaurant.getPostalCode()).isEqualTo("45000000");
-	assertThat(restaurant.getAddress()).isEqualTo("愛知県名古屋市中区栄x-xx-xx");
+	assertThat(restaurant.getPostalCode()).isEqualTo("4500000");
+	assertThat(restaurant.getAddress()).isEqualTo("愛知県名古屋市中区栄X-XX-XX");
 	assertThat(restaurant.getOpeningTime()).isEqualTo("10:00");
-	assertThat(restaurant.getClosingTime()).isEqualTo("22:00");
+	assertThat(restaurant.getClosingTime()).isEqualTo("20:00");
 	assertThat(restaurant.getSeatingCapacity()).isEqualTo(50);
 	}
 	
@@ -347,7 +347,7 @@ public class AdminRestaurantControllerTest {
 				"imageFile" ,    //フォームのname属性の値
 				fileName  ,      //ファイル名
 				fileType  ,      //ファイルの形式
-				fileBytes        //ファイルのバイトの配列
+				fileBytes        //ファイルのバイト配列
 			);
 		
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/admin/restaurants/1/update").file(imageFile)
@@ -366,12 +366,12 @@ public class AdminRestaurantControllerTest {
 		Optional<Restaurant> optionalRestaurant = restaurantService.findRestaurantById(1);
 		assertThat(optionalRestaurant).isPresent();
 		Restaurant restaurant = optionalRestaurant.get();
-		assertThat(restaurant.getName()).isEqualTo("NAGOYA BURGER 各駅店");
-		assertThat(restaurant.getDescription()).isEqualTo("名古屋老舗のお店。老舗の味を堪能ください。");
+		assertThat(restaurant.getName()).isEqualTo("NAGOYA BURGER 名駅店");
+		assertThat(restaurant.getDescription()).isEqualTo("名古屋老舗のお店。老舗の味をご堪能ください。");
 		assertThat(restaurant.getLowestPrice()).isEqualTo(3000);
 		assertThat(restaurant.getHighestPrice()).isEqualTo(4000);
 		assertThat(restaurant.getPostalCode()).isEqualTo("4500000");
-		assertThat(restaurant.getAddress()).isEqualTo("愛知県名古屋市中区栄x-xx-xx");
+		assertThat(restaurant.getAddress()).isEqualTo("愛知県名古屋市中区栄X-XX-XX");
 		assertThat(restaurant.getOpeningTime()).isEqualTo("10:00");
 		assertThat(restaurant.getClosingTime()).isEqualTo("20:00");
 		assertThat(restaurant.getSeatingCapacity()).isEqualTo(50);

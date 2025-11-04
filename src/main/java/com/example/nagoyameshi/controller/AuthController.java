@@ -40,6 +40,7 @@ public class AuthController{
 	//@GetMapping HTTP GETリクエストを特定のメソッドにマッピングするためのアノテーション
 	@GetMapping("/login")
 	public String login() {
+		System.out.println("処理2");
 		return "auth/login";
 	}
 	
